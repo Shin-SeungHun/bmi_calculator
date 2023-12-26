@@ -1,13 +1,15 @@
+import 'package:bmi_calculator/model/user_bmi_data.dart';
 import 'package:flutter/material.dart';
 
 class ResultScreen extends StatelessWidget {
-  final double height;
-  final double weight;
+  final UserBmiData userBmiData;
+
+  // final double height;
+  // final double weight;
 
   const ResultScreen({
     super.key,
-    required this.height,
-    required this.weight,
+    required this.userBmiData,
   });
 
   String _calcBmi(double bmi) {
@@ -51,6 +53,8 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double weight = userBmiData.weight.toDouble();
+    double height = userBmiData.height.toDouble();
     final bmi = weight / ((height / 100.0) * (height / 100.0));
     // String result = '정상';
 
