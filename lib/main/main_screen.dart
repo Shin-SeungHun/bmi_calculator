@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:bmi_calculator/model/user_bmi_data.dart';
 import 'package:bmi_calculator/result/result_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
@@ -10,9 +15,9 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _heightController = TextEditingController();
-  final _weightController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
 
   @override
   void initState() {
@@ -41,7 +46,9 @@ class _MainScreenState extends State<MainScreen> {
     if (height != null && weight != null) {
       _heightController.text = '$height';
       _weightController.text = '$weight';
-      print('키 : $height, 몸무게 $weight');
+      if (kDebugMode) {
+        print('키 : $height, 몸무게 $weight');
+      }
     }
   }
 
@@ -91,15 +98,28 @@ class _MainScreenState extends State<MainScreen> {
                     return;
                   }
 
+                  final height = double.parse(_heightController.text);
+                  final weight = double.parse(_weightController.text);
                   save();
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ResultScreen(
-                          height: double.parse(_heightController.text),
-                          weight: double.parse(_weightController.text)),
-                    ),
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => ResultScreen(
+                  //         height: double.parse(_heightController.text),
+                  //         weight: double.parse(_weightController.text)),
+                  //   ),
+                  // );
+
+                  final userBmiData =
+                      UserBmiData(height: height, weight: weight);
+                  context.push(
+                    Uri(
+                      path: '/result',
+                      queryParameters: {
+                        'userBmiData': jsonEncode(userBmiData.toJson())
+                      },
+                    ).toString(),
                   );
                 },
                 child: const Text('결과'),
